@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id='clock' width=1600 height=600></canvas>
+
+    <script>
+        "use strict";
+        // Создаем желтый круг
+        let xYellow = 700;
+        let yYellow = 300;
+        var radiusGreen = 250;
+        var radiusYellow = 300;
+        
+        const yellowCircle = function () {
+            const canvasPathes = document.getElementById('clock');
+            canvasPathes.parentElement.style.display = 'block';
+
+            if (canvasPathes && canvasPathes.getContext('2d')) {
+                let ctx = canvasPathes.getContext('2d');
+
+                ctx.strokeStyle = 'black';
+                ctx.fillStyle = 'yellow';
+                ctx.lineWidth = 1;
+
+                ctx.beginPath();
+                ctx.arc(xYellow, yYellow, radiusYellow, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+        // Создаем зеленые кружочки
+
+        let xGreen;
+        let yGreen;
+        const greenCircle = function () {
+            const canvasPathes = document.getElementById('clock');
+            canvasPathes.parentElement.style.display = 'block';
+
+            if (canvasPathes && canvasPathes.getContext('2d')) {
+                let ctx = canvasPathes.getContext('2d');
+
+                ctx.strokeStyle = 'black';
+                ctx.fillStyle = 'green';
+                ctx.lineWidth = 1;
+
+
+                for (let k = 0; k <= 360; k = k + 30) {
+                    var angleGreen = parseFloat(k) / 180 * Math.PI;
+                    var greenCenterX = xYellow + radiusGreen * Math.sin(angleGreen);
+                    var greenCenterY = yYellow - radiusGreen * Math.cos(angleGreen);
+                    xGreen = Math.round(greenCenterX);
+                    yGreen = Math.round(greenCenterY);
+
+                    ctx.beginPath();
+                    ctx.arc(xGreen, yGreen, 40, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                }
+            }
+        }
+        //Создаем цифры на зеленых кружках
+
+        const blackText = function () {
+            const canvasPathes = document.getElementById('clock');
+            canvasPathes.parentElement.style.display = 'block';
+
+            if (canvasPathes && canvasPathes.getContext('2d')) {
+                let ctx = canvasPathes.getContext('2d');
+
+                ctx.strokeStyle = 'black';
+                ctx.fillStyle = 'black';
+                ctx.lineWidth = 2;
+                ctx.font = 'italic bold 50px Arial';
+                ctx.textAlign = 'center';
+
+
+
+                for (let g = 0, k = 30; g < 5, k <= 360; g++, k = k + 30) {
+                    var angleGreen = parseFloat(k) / 180 * Math.PI;
+                    var greenCenterX = xYellow + radiusGreen * Math.sin(angleGreen);
+                    var greenCenterY = yYellow - radiusGreen * Math.cos(angleGreen);
+                    xGreen = Math.round(greenCenterX);
+                    yGreen = Math.round(greenCenterY);
+
+                    ctx.fillText(g + 1, xGreen - 2, yGreen + 17);
+                }
+            }
+        }
+
+        // создаем стрелки
+
+
+        function clock() {
+            var h;
+            var m;
+            var s;
+            var date = new Date(),
+            h = date.getHours();
+            m = date.getMinutes();
+            s = date.getSeconds();
+            var hour = 30 * (date.getHours() + (1 / 60) * date.getMinutes());
+            var minute = 6 * (date.getMinutes() + (1 / 60) * date.getSeconds());
+            var second = s * 6;
+
+            var angleS = Math.PI / 2 - second * (Math.PI / 180);
+            var angleM = Math.PI / 2 - minute * (Math.PI / 180);
+            var angleH = Math.PI / 2 - hour * (Math.PI / 180);
+            // Создаем функцию, что бы данные меньше 10 отображались двухзначными
+            function updateTime(a) {
+                if (a < 10) {
+                    return "0" + a;
+                } else {
+                    return a;
+                }
+            }
+
+            // создаем секундную стрелку
+            const secondLines = function () {
+                const canvasLines = document.getElementById('clock');
+                canvasLines.parentElement.style.display = 'block';
+
+                if (canvasLines && canvasLines.getContext('2d')) {
+                    let ctx = canvasLines.getContext('2d');
+                    // Обновляем страницу
+                    function blank() {
+                        ctx.fillStyle = 'white';
+                        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                        yellowCircle();
+                        greenCircle();
+                        blackText();
+                    }
+
+                    blank();
+
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'black';
+                    ctx.fillStyle = 'black';
+                    ctx.lineCap = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(xYellow, yYellow);
+                    ctx.lineTo(xYellow + radiusGreen * Math.cos(angleS), yYellow - radiusGreen * Math.sin(angleS));
+                    ctx.lineTo(xYellow - 20 * Math.cos(angleS), yYellow + 20 * Math.sin(angleS));
+                    ctx.stroke();
+                }
+
+            }
+            secondLines();
+            // создаем минутную стрелку
+            const minuteLines = function () {
+                const canvasLines = document.getElementById('clock');
+                canvasLines.parentElement.style.display = 'block';
+
+                if (canvasLines && canvasLines.getContext('2d')) {
+                    let ctx = canvasLines.getContext('2d');
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = 'red';
+                    ctx.fillStyle = 'red';
+                    ctx.lineCap = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(xYellow, yYellow);
+                    ctx.lineTo(xYellow + 200 * Math.cos(angleM), yYellow - 200 * Math.sin(angleM));
+                    ctx.lineTo(xYellow - 5 * Math.cos(angleM), yYellow + 5 * Math.sin(angleM));
+                    ctx.stroke();
+                }
+            }
+            minuteLines();
+            // создаем часовую стрелку
+            const hourLines = function () {
+                const canvasLines = document.getElementById('clock');
+                canvasLines.parentElement.style.display = 'block';
+
+                if (canvasLines && canvasLines.getContext('2d')) {
+                    let ctx = canvasLines.getContext('2d');
+                    ctx.lineWidth = 6;
+                    ctx.strokeStyle = 'green';
+                    ctx.fillStyle = 'green';
+                    ctx.lineCap = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(xYellow, yYellow);
+                    ctx.lineTo(xYellow + 150 * Math.cos(angleH), yYellow - 150 * Math.sin(angleH));
+                    ctx.lineTo(xYellow - 5 * Math.cos(angleH), yYellow + 5 * Math.sin(angleH));
+                    ctx.stroke();
+                }
+            }
+            hourLines();
+
+            // создаем цифровые часы
+            const clockText = function () {
+                const canvasPathes = document.getElementById('clock');
+                canvasPathes.parentElement.style.display = 'block';
+
+                if (canvasPathes && canvasPathes.getContext('2d')) {
+                    let ctx = canvasPathes.getContext('2d');
+
+                    ctx.strokeStyle = 'black';
+                    ctx.fillStyle = 'black';
+                    ctx.lineWidth = 2;
+                    ctx.font = 'italic bold 50px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(updateTime(h) + ":" + updateTime(m) + ":" + updateTime(s), xGreen - 5, yGreen + 150);
+                }
+            }
+            clockText();
+        }
+        let timerID = setInterval(clock, 1000);
+        yellowCircle();
+        greenCircle();
+        blackText();
+
+    </script>
+</body>
+
+</html>
